@@ -4,6 +4,9 @@
 infile=$1
 outfile=$2
 res=$3
+echo ${infile}
+echo ${outfile}
+echo ${res}
 for ((i=1;i<=22;i++)); do 
 	for ((j=$((i));j<=22;j++)); do 
 		c1=chr${i}

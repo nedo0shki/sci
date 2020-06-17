@@ -1,7 +1,7 @@
 import sys
 import argparse
-from .hic import HicData
-from .Compartments import Compartments
+from hic import HicData
+from Compartments import Compartments
 
 
 def run_sci():
@@ -94,7 +94,7 @@ def run_sci():
     oArgs = parser.parse_args()
     myobject = HicData(oArgs.res, oArgs.name)
     myobject.initialize(oArgs.genome_size)
-    myobject.load_interaction_data(oArgs.infile)
+    #myobject.load_interaction_data(oArgs.infile)
     hic_graph = myobject.write_inter_chrom_graph()
     GW_metadata = myobject.get_bins_info()
 

@@ -26,7 +26,7 @@ class HicData:
         oF = open(chrsize_file)
         for line in oF.readlines():
             parts = line.strip().split()
-            self.dChrBins[parts[0]] = int(parts[1])/self.res + 1
+            self.dChrBins[parts[0]] = int(int(parts[1])/self.res) + 1
         return
 
     def initialize(self, chr_size_file):
@@ -43,12 +43,12 @@ class HicData:
 
     def initialize_contact_matrix(self):
         # initialize cis interaction matrices
-        for chrom in self.dChrBins.keys():
+        for chrom in ["chr" + str(i) for i in range(1,23)]:
             shape = self.dChrBins[chrom]
             self.contact_matrices[(chrom, chrom)] = np.zeros((shape, shape))
 
         # initialize trans matricies
-        for chrom1, chrom2 in combinations(self.dChrBins.keys(), 2):
+        for chrom1, chrom2 in combinations(["chr" + str(i) for i in range(1,23)], 2):
             rows = self.dChrBins[chrom1]
             cols = self.dChrBins[chrom2]
             self.contact_matrices[(chrom1, chrom2)] = np.zeros((rows, cols))
@@ -66,8 +66,8 @@ class HicData:
         for line in tqdm(oF.readlines(), desc='Reading %s' % contact_file):
             (chrom1, start1, end1, chrom2,
                 start2, end2, count) = line.strip().split()
-            i = int(start1) / self.res
-            j = int(start2) / self.res
+            i = int(int(start1) / self.res)
+            j = int(int(start2) / self.res)
 
             # Debug snnipet
             try:
@@ -100,20 +100,23 @@ class HicData:
 
     def write_inter_chrom_graph(self):
         outfile = "%s_HiC_graph.txt" % self.name
-        oF = open(outfile, "w")
+        if os.path.exists(outfile):
+            return outfile
+        else:
+            oF = open(outfile, "w")
 
-        for (chrom1, chrom2) in tqdm(self.ordered_pairs,
+            for (chrom1, chrom2) in tqdm(self.ordered_pairs,
                                      desc="writing HiC graph"):
-            if chrom1 != chrom2:
-                if self.embedding_mode == "oe":
-                    c1 = int(chrom1.strip("chr"))
-                    c2 = int(chrom2.strip("chr"))
+                if chrom1 != chrom2:
+                    if self.embedding_mode == "oe":
+                        c1 = int(chrom1.strip("chr"))
+                        c2 = int(chrom2.strip("chr"))
 
-                    if c1 % 2 == 1 and c2 % 2 == 0:
+                        if c1 % 2 == 1 and c2 % 2 == 0:
+                            self.dump_interchrom_block(oF, chrom1, chrom2)
+                    else:
                         self.dump_interchrom_block(oF, chrom1, chrom2)
-                else:
-                    self.dump_interchrom_block(oF, chrom1, chrom2)
-        return outfile
+            return outfile
 
     def dump_interchrom_block(self, oF, chrom1, chrom2):
         row, col = self.contact_matrices[(chrom1, chrom2)].shape

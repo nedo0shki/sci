@@ -30,7 +30,7 @@ class Compartments:
     def predict_subcompartents(self, graphFile, order, samples, k=5):
         # run graph embedding
         embedding_files = run_LINE(graphFile, samples, order)
-
+        '''
         # process embedding
         if order != "both":
             data = self.process_LINE_embedding(embedding_files)
@@ -62,7 +62,7 @@ class Compartments:
             oF.write("%s\t%d\t%d\t%s\n" %
                      (coord[0], coord[1], coord[2], value))
         oF.close()
-
+        '''
     def predict_ab_one_chrom(self, contact_matrix):
         # do some normalizations
         AB_compartments = []

@@ -10,7 +10,7 @@ def _LaunchJob(sCommand, sStdin=None):
     Launch any command using pipes
     '''
     aArgs = shlex.split(sCommand)
-    print aArgs
+    print (aArgs)
     if sStdin is not None:
         oProcess = subprocess.Popen(aArgs, shell=False,
                                     stdin=subprocess.PIPE,
@@ -21,7 +21,7 @@ def _LaunchJob(sCommand, sStdin=None):
         oProcess = subprocess.Popen(aArgs, shell=False,
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)
-        print oProcess
+        print (oProcess)
         tOutput = oProcess.communicate()
     return tOutput
 
@@ -35,7 +35,7 @@ def run_LINE(inFile, samples, mode):
     if mode == "both_combined":
         outFile = ('%s_order_3_samples_%dM.embedding'
                    % (inFile.split(".")[0], samples))
-        command = ("LINE/line -train %s "
+        command = ("../LINE/line -train %s "
                    "-order 3 -samples %d -output %s"
                    % (inFile, samples, outFile))
         tOutput = _LaunchJob(command)
@@ -46,7 +46,7 @@ def run_LINE(inFile, samples, mode):
     elif mode == "1" or mode == "2":
         outFile = ("%s_order_%s_samples_%dM.embedding"
                    % (inFile.split(".")[0], mode, samples))
-        command = ("LINE/line -train %s -order %s"
+        command = ("../LINE/line -train %s -order %s"
                    "-samples %d -output %s"
                    % (inFile, mode, samples, outFile))
         tOutput = _LaunchJob(command)
@@ -58,21 +58,21 @@ def run_LINE(inFile, samples, mode):
         # run line for both 1 and 2 orders
         outFile1 = ("%s_order_1_samples_%dM.embedding"
                     % (inFile.split(".")[0], samples))
-        command = ("LINE/line -train %s -order 1 -samples %d -output %s"
+        command = ("../LINE/line -train %s -order 1 -samples %d -output %s"
                    % (inFile, samples, outFile1))
         tOutput = _LaunchJob(command)
         if tOutput[1] != '':
             sys.exit(tOutput[1])
         outFile2 = ("%s_order_2_samples_%dM.embedding"
                     % (inFile.split(".")[0], samples))
-        command = ("LINE/line -train %s -order 2 -samples %d -output %s"
+        command = ("../LINE/line -train %s -order 2 -samples %d -output %s"
                    % (inFile, samples, outFile2))
         _LaunchJob(command)
         if tOutput[1] != '':
             sys.exit(tOutput[1])
         return (outFile1, outFile2)
     else:
-        print "%s mode is not supported" % (mode)
+        print ("%s mode is not supported" % (mode))
         sys.exit(1)
 
 
