@@ -2,6 +2,7 @@ import sys
 import argparse
 from hic import HicData
 from Compartments import Compartments
+from embedding import embedding
 
 
 def run_sci():
@@ -100,12 +101,15 @@ def run_sci():
 
     if oArgs.adj_matrix is not None:
         myobject.write_GW_matrix(oArgs.adj_matrix)
-
-    predictor = Compartments(oArgs.name, GW_metadata)
-    predictor.predict_subcompartents(hic_graph,
+    emb = embedding(oArgs.name, GW_metadata, oArgs.res)
+    emb.make_embedding_file(hic_graph,
                                      oArgs.order,
-                                     oArgs.samples,
-                                     oArgs.clusters)
+                                     oArgs.samples)
+    #predictor = Compartments(oArgs.name, GW_metadata)
+    #predictor.predict_subcompartents(hic_graph,
+    #                                 oArgs.order,
+    #                                 oArgs.samples,
+    #                                 oArgs.clusters)
 
 
 if __name__ == '__main__':
